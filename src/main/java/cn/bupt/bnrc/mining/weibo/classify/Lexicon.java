@@ -18,6 +18,7 @@ import cn.bupt.bnrc.mining.weibo.util.Constants;
 import cn.bupt.bnrc.mining.weibo.util.Utils;
 
 import com.google.common.io.Files;
+import com.google.common.io.LineProcessor;
 
 public class Lexicon {
 	
@@ -37,12 +38,12 @@ public class Lexicon {
 	public static Lexicon getInstance(){
 		if (lexicon == null){
 			lexicon = new Lexicon();
-			//lexicon.readPredictedNegativeWords();
-			//lexicon.readPredictedPositiveWords();
-			//lexicon.readSAStopWords();
-			//Lexicon.negativeWordsMap = lexicon.filter(negativeWordsMap, stopWords);
-			//Lexicon.positiveWordsMap = lexicon.filter(positiveWordsMap, stopWords);
-			//Lexicon.sentimentWordsMap = lexicon.filter(sentimentWordsMap, stopWords);
+			lexicon.readPredictedNegativeWords();
+			lexicon.readPredictedPositiveWords();
+			lexicon.readSAStopWords();
+			Lexicon.negativeWordsMap = lexicon.filter(negativeWordsMap, stopWords);
+			Lexicon.positiveWordsMap = lexicon.filter(positiveWordsMap, stopWords);
+			Lexicon.sentimentWordsMap = lexicon.filter(sentimentWordsMap, stopWords);
 		}
 		return lexicon;
 	}
@@ -121,6 +122,36 @@ public class Lexicon {
 		Lexicon.stopWords = stopWords;
 	}
 	
+	public static HashMap<String, Double> readDLLGWords(){
+		String filePath = Constants.RESOURCES_PREFIX +"/words/sentiment words.csv";
+		try {
+			HashMap<String, Double> result = Files.readLines(new File(filePath), Constants.defaultCharset, new LineProcessor<HashMap<String, Double>>(){
+				HashMap<String, Double> words = new HashMap<String, Double>();
+				public boolean processLine(String line) throws IOException {
+					String[] three = line.split(",");
+					if (3 == three.length){
+						int polar = new Integer(three[2]);
+						int strength = new Integer(three[1]);
+						if (1 == polar && 3 <  strength){
+							words.put(three[0].trim(), 1.0);
+						}else if (2 == polar && 3 < strength){
+							words.put(three[0].trim(), -1.0);
+						}
+					}
+					return true;
+				}
+				public HashMap<String, Double> getResult() {
+					return words;
+				}				
+			});
+			
+			return result;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public Set<String> readSAStopWords(){
 		String filePath = Lexicon.class.getClassLoader().getResource("").getPath() + "/words/not-sentiment-words.txt".substring(1);
 		logger.info(String.format("readSAStopWords start -- %s", filePath));
@@ -135,7 +166,7 @@ public class Lexicon {
 	}
 	
 	public Map<String,Double> readUntaggedSentimentWords(){
-		String filePath = Lexicon.class.getClassLoader().getResource("").getPath() + "/words/sentiment-words.txt".substring(1);
+		String filePath = Constants.RESOURCES_PREFIX + "/words/sentiment-words.txt";
 		logger.info(String.format("readUntaggedSentimentWords start -- file: %s", filePath));
 		Map<String, Double> sentimentWords = this.readWordValueFromFile(filePath);
 		if (sentimentWordsMap == null){

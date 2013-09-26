@@ -21,8 +21,8 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import cn.bupt.bnrc.mining.weibo.search.ContentIndexer;
 import cn.bupt.bnrc.mining.weibo.search.ContentSearcher;
+import cn.bupt.bnrc.mining.weibo.search.IndexSearchConstants;
 import cn.bupt.bnrc.mining.weibo.util.Utils;
 
 /**
@@ -39,7 +39,7 @@ import cn.bupt.bnrc.mining.weibo.util.Utils;
 public class SentimentalWordExpander6 {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	private ContentSearcher contentSearcher = new ContentSearcher();
+	private ContentSearcher contentSearcher = new ContentSearcher(IndexSearchConstants.STATUS_INDEX);
 	
 	private static JedisPool pool;
 	private Jedis redis = null;
@@ -65,7 +65,7 @@ public class SentimentalWordExpander6 {
 	
 	public void expanding(HashSet<String> seeds, String indexPath, List<Map<String,Object>> statuses, int databaseIndex){
 		if (statuses != null){
-			new ContentIndexer(indexPath).indexStringList(statuses);
+			//new ContentIndexer(indexPath).indexStringList(statuses);
 		}
 		
 		this.initEnvironment(indexPath, databaseIndex);

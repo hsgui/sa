@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,8 @@ import com.google.common.io.Files;
 public class Utils {
 
 	private static Logger logger = LoggerFactory.getLogger(Utils.class);
+	
+	private static Random random = new Random();
 	
 	public static Charset defaultCharset = Charset.forName("utf-8");
 	
@@ -44,6 +47,11 @@ public class Utils {
 		emoticons.add("嘻嘻");
 		System.out.println(Utils.isContainAnyEmoticons("生活更精彩[嘻嘻]"));
 		System.out.println(Utils.isContainEmoticons("生活更精彩[嘻嘻]", emoticons));
+		
+		Set<String> emoticons1 = Utils.emoticonsInContent("生活更精彩[嘻嘻],[精彩]");
+		for (String e : emoticons1){
+			System.out.println(e);
+		}
 	}
 	
 	public static Date getDateBefore(Date d,int day){
@@ -67,6 +75,33 @@ public class Utils {
 		return anyEmoticonPattern.matcher(string).find();
 	}
 	
+	public static Set<String> emoticonsInContent(String content){
+		Matcher m = emoticonsPattern.matcher(content);
+		Set<String> emoticons = new HashSet<String>();
+		while (m.find()){
+			emoticons.add(m.group(1));
+		}
+		return emoticons;
+	}
+	
+	public static List<String> randomSelectWords(List<String> words, int k){
+		if (words.size() < k){
+			System.exit(-1);
+		}
+		if (words.size() == k) return new ArrayList<String>(words);
+		
+		int num = words.size();
+		List<String> selectedWords = new ArrayList<String>(k);
+		
+		for (int i = 0; i < num; i++){
+			if ((Math.abs(random.nextInt()) % (num - i)) < k){
+				selectedWords.add(words.get(i));
+				k--;
+			}
+		}		
+		return selectedWords;
+	}
+	
 	public double maxValue(HashMap<String, Double> map){
 		double max = -1;
 		for (Iterator<Entry<String, Double>> it = map.entrySet().iterator(); it.hasNext();){
@@ -76,11 +111,11 @@ public class Utils {
 		return max;
 	}
 	
-	public static double sumMap(HashMap<String, Double> map){
+	public static <T extends Number> double sumMap(HashMap<String, ? extends T> map){
 		double sum = 0;
-		for (Iterator<Entry<String, Double>> it = map.entrySet().iterator(); it.hasNext();){
-			Entry<String, Double> entry = it.next();
-			sum += entry.getValue();
+		for (Iterator<? extends Entry<String, ? extends T>> it = map.entrySet().iterator(); it.hasNext();){
+			Entry<String, ? extends T> entry = it.next();
+			sum += entry.getValue().doubleValue();
 		}
 		return sum;
 	}

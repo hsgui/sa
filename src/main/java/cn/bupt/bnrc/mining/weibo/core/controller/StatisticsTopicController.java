@@ -108,7 +108,7 @@ public class StatisticsTopicController {
 				topicId, page, negativeStatuses.size()));
 	}
 	
-	private int day = 14;
+	private int day = 356;
 	@Autowired private StatisticsTopic statisticsTopic;
 	@Autowired private PagedTopicRelatedPositiveStatuses pagedTopicRelatedPositiveStatuses;
 	@Autowired private PagedTopicRelatedNegativeStatuses pagedTopicRelatedNegativeStatuses;

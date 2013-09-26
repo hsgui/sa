@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cn.bupt.bnrc.mining.weibo.util.Constants;
+
 public class NLPIR {
 	// encoding=0, GBK; encoding=1, UTF8; encoding=2, BIG5
 	public static native boolean NLPIR_Init(byte[] sDataPath, int encoding);
@@ -134,14 +136,14 @@ public class NLPIR {
 
 	/* Use static intializer */
 	static {
-		System.load((NLPIR.class.getClassLoader().getResource("").getPath()+"/nlpir/NLPIR_JNI.dll").substring(1));
+		System.load(Constants.RESOURCES_PREFIX + "/nlpir/NLPIR_JNI.dll");
 	}
 	
 	private static Logger logger = LoggerFactory.getLogger(NLPIR.class);
 	
 	public static String charset = "utf-8";
 	public static String userWordCharset = "GB2312";
-	public static String userdicPath = (NLPIR.class.getClassLoader().getResource("").getPath()+"/nlpir/userdic.txt").substring(1);
+	public static String userdicPath = Constants.RESOURCES_PREFIX + "/nlpir/userdic.txt";
 	private static NLPIR nlpir = null;
 	
 	private NLPIR(){}
@@ -190,7 +192,7 @@ public class NLPIR {
 	public static NLPIR getInstance(){
 		if (nlpir == null){
 			nlpir = new NLPIR();
-			String argu = (NLPIR.class.getClassLoader().getResource("").getPath()+"/nlpir").substring(1);
+			String argu = Constants.RESOURCES_PREFIX + "/nlpir";
 			try {
 				boolean result = NLPIR.NLPIR_Init(argu.getBytes(charset),1);
 				if (result == false) return null;

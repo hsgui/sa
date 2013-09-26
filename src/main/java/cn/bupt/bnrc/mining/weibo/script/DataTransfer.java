@@ -1,6 +1,7 @@
 package cn.bupt.bnrc.mining.weibo.script;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,25 +19,8 @@ public class DataTransfer {
 	private JdbcTemplate localJdbcTemplate;
 
 	public DataTransfer(){
-		BasicDataSource localDS = new BasicDataSource();
-		localDS.setDriverClassName("org.gjt.mm.mysql.Driver");
-		localDS.setUrl("jdbc:mysql://localhost:3306/statuses?useUnicode=true&amp;characterEncoding=UTF-8");
-		localDS.setUsername("root");
-		localDS.setPassword("bnrc");
-		localDS.setInitialSize(5);
-		localDS.setMaxActive(50);
-		localDS.setMaxIdle(5);
-		localDS.setMinIdle(1);
-		
-		BasicDataSource remoteDS = new BasicDataSource();
-		remoteDS.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		remoteDS.setUrl("jdbc:sqlserver://10.108.96.126:1433;DatabaseName=Sinawler2_new;useUnicode=true&amp;characterEncoding=UTF-8");
-		remoteDS.setUsername("sa");
-		remoteDS.setPassword("bnrc609");
-		remoteDS.setInitialSize(5);
-		remoteDS.setMaxActive(50);
-		remoteDS.setMaxIdle(5);
-		remoteDS.setMinIdle(1);
+		BasicDataSource localDS = DataSourceFactory.getDataSource(DataSourceFactory.DATASOURCEType.localHostMysql);		
+		BasicDataSource remoteDS = DataSourceFactory.getDataSource(DataSourceFactory.DATASOURCEType.remoteSqlserver);
 
 		this.setLocalJdbcTemplate(localDS);
 		this.setRemoteJdbcTemplate(remoteDS);
@@ -63,12 +47,22 @@ public class DataTransfer {
 		
 		String insertSql = "insert ignore into statuses(status_id, content, created_at) values(?,?,?)";
 		
-		int intervalDay = 5;
+		startTime = new DateTime(2011,12,27,20,57,22);
+		int intervalDay = 2;
 		for (DateTime start = startTime, next = startTime.plusDays(intervalDay); start.isBefore(endTime); 
 				start = next, next = next.plusDays(intervalDay)){
+			String startTimeString = start.toString("yyyy-MM-dd HH:mm:ss");
+			String nextTimeString = next.toString("yyyy-MM-dd HH:mm:ss");
+			
+			Date s = new Date();
+			
 			List<Map<String, Object>> statuses = remoteJdbcTemplate.queryForList(selectStatuses, 
 					new Object[]{new Timestamp(start.getMillis()), new Timestamp(next.getMillis())}, 
 					new int[]{java.sql.Types.TIMESTAMP, java.sql.Types.TIMESTAMP});
+			
+			Date e = new Date();
+			System.out.printf("get statuses: fetched-size=%d, start=%s, end=%s, cost-time=%d ms\n", 
+					statuses.size(), startTimeString, nextTimeString, e.getTime() - s.getTime());
 			
 			int count = 0;
 			for (Map<String, Object> status : statuses){
@@ -80,8 +74,10 @@ public class DataTransfer {
 					count++;
 				}
 			}
-			System.out.println(String.format("get statues: fetched-size=%d, added-size=%d, start=%s, end=%s", 
-					statuses.size(), count, start.toString("yyyy-MM-dd HH:mm:ss"), next.toString("yyyy-MM-dd HH:mm:ss")));
+			s = e;
+			e = new Date();
+			System.out.printf("get statues: added-size=%d, start=%s, end=%s, cost-time=%d ms\n", 
+					count, startTimeString, nextTimeString, e.getTime() - s.getTime());
 		}
 	}
 	

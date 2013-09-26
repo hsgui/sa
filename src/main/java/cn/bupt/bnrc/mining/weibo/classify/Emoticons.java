@@ -1,12 +1,22 @@
 package cn.bupt.bnrc.mining.weibo.classify;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import cn.bupt.bnrc.mining.weibo.util.Constants;
+import cn.bupt.bnrc.mining.weibo.util.Utils;
+
+import com.google.common.io.Files;
+import com.google.common.io.LineProcessor;
 
 /**
  * 有关表情的类。
@@ -36,6 +46,62 @@ public class Emoticons {
 		
 		positiveEmoticonSet.addAll(Arrays.asList(positiveEmoticonWords));
 		negativeEmoticonSet.addAll(Arrays.asList(negativeEmoticonWords));
+	}
+	
+	private static Set<String> emoticonsInWeibo = null;
+	private static Map<String, Double> emoticonsInCopora = null;
+	
+	public static Set<String> getEmoticonsInWeibo(){
+		if (emoticonsInWeibo != null){
+			return emoticonsInWeibo;
+		}
+		
+		Set<String> emoticons = new HashSet<String>();
+		String fileName = Constants.RESOURCES_PREFIX +"/data/emoticons-weibo.txt";
+		try {
+			emoticons = Files.readLines(new File(fileName), Constants.defaultCharset, new LineProcessor<Set<String>>(){
+				Set<String> emoticons = new HashSet<String>();
+				public boolean processLine(String line) throws IOException {
+					emoticons.addAll(Utils.emoticonsInContent(line));
+					return true;
+				}
+				public Set<String> getResult() {
+					return emoticons;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		emoticonsInWeibo = emoticons;
+		
+		return emoticons;
+	}
+	
+	public static Map<String, Double> getEmoticonsInCopora(){
+		if (emoticonsInCopora != null){
+			return emoticonsInCopora;
+		}
+		
+		String fileName = Constants.RESOURCES_PREFIX +"/statistics/emoticons-count.txt";
+		try {
+			emoticonsInCopora = Files.readLines(new File(fileName), Constants.defaultCharset, new LineProcessor<Map<String, Double>>(){
+				Map<String, Double> emoticons = new HashMap<String, Double>();
+				public boolean processLine(String line) throws IOException {
+					String[] pair = line.split(",");
+					if (pair.length == 2){
+						emoticons.put(pair[0], new Double(pair[1]));
+					}
+					return true;
+				}
+				public Map<String, Double> getResult() {
+					return emoticons;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return emoticonsInCopora;
 	}
 	
 	//this method has some bug..

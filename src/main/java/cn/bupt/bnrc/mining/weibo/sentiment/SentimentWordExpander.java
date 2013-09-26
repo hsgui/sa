@@ -80,6 +80,7 @@ public class SentimentWordExpander {
 		Utils.hashMapToDisk(contexts, file);
 	}
 	
+	/*
 	public void expanding(HashSet<String> seeds, String indexPath, List<Map<String,Object>> statuses, int databaseIndex){
 		this.databaseIndex = databaseIndex;
 		if (statuses != null){
@@ -92,6 +93,7 @@ public class SentimentWordExpander {
 		
 		this.runAll(seeds);
 	}
+	*/
 	
 	public void expanding(Set<String> seeds, Set<String> contexts, String indexPath, List<String> statuses, int databaseIndex){
 		

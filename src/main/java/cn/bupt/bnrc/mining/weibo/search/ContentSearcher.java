@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import cn.bupt.bnrc.mining.weibo.util.Constants;
 import cn.bupt.bnrc.mining.weibo.util.Utils;
 
 @Service
@@ -45,23 +44,12 @@ public class ContentSearcher {
 	private Analyzer analyzer;
 	private QueryParser parser;
 
-	public ContentSearcher() {
-		try {
-			reader = DirectoryReader.open(FSDirectory.open(new File(Constants.INDEX)));
-			searcher = new IndexSearcher(reader);
-			analyzer = new StandardAnalyzer(Version.LUCENE_40);
-			parser = new QueryParser(Version.LUCENE_40, Constants.FILED_NAME, analyzer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public ContentSearcher(String indexDir) {
 		try {
 			reader = DirectoryReader.open(FSDirectory.open(new File(indexDir)));
 			searcher = new IndexSearcher(reader);
 			analyzer = new StandardAnalyzer(Version.LUCENE_40);
-			parser = new QueryParser(Version.LUCENE_40, Constants.FILED_NAME, analyzer);
+			parser = new QueryParser(Version.LUCENE_40, IndexSearchConstants.CONTENT_FIELD, analyzer);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +86,7 @@ public class ContentSearcher {
 	 */
 	public Query word2Query(String word){
 		try {
-			return parser.parse(Constants.FILED_NAME+":\"" + word + "\"");
+			return parser.parse(IndexSearchConstants.CONTENT_FIELD+":\"" + word + "\"");
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -253,8 +241,8 @@ public class ContentSearcher {
 			TopDocs results = searcher.search(parser.parse(searchQuery), MAX_SIZE);
 			for (int i = 0; i < results.totalHits; i++) {
 				int docId = results.scoreDocs[i].doc;
-				HashSet<Integer> key1Position = this.getOneKeyPositionList(docId, Constants.FILED_NAME, key1);
-				HashSet<Integer> key2Position = this.getOneKeyPositionList(docId, Constants.FILED_NAME, key2);
+				HashSet<Integer> key1Position = this.getOneKeyPositionList(docId, IndexSearchConstants.CONTENT_FIELD, key1);
+				HashSet<Integer> key2Position = this.getOneKeyPositionList(docId, IndexSearchConstants.CONTENT_FIELD, key2);
 				for (Iterator<Integer> it = key1Position.iterator(); it.hasNext();){
 					int pos = it.next();
 					if (key2Position.contains(pos+distance) || key2Position.contains(pos-distance)){
@@ -273,12 +261,12 @@ public class ContentSearcher {
 	}
 
 	public static void main(String[] args) throws Exception {
-		ContentSearcher searcher = new ContentSearcher(Constants.EMOTICON_INDEX);
+		ContentSearcher searcher = new ContentSearcher(IndexSearchConstants.EMOTICON_INDEX);
 		System.out.println(searcher.getTotalDocumentsCount());
-		int num = 100;
+		int num = 10;
 
 		try {
-			TopDocs docs = searcher.searchWord("幽雅", num);
+			TopDocs docs = searcher.searchWord("盛誉", num);
 			
 			System.out.println(docs.totalHits);
 			for (int i = 0; i< Math.min(num, docs.totalHits); i++){

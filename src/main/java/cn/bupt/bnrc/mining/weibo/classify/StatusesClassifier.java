@@ -9,6 +9,8 @@ public class StatusesClassifier {
 	
 	public int classify(String status){
 		int flag = Constants.UNKOWN;
+		if (status == null || status.trim().length() == 0) return flag;
+		
 		if (subObjClassifier.classify(status) == Constants.SUBJECTIVE){
 			flag = polarityClassifier.classifyPolarity(status);
 		}else{

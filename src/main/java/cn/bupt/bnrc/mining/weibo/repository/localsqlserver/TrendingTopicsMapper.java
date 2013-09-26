@@ -6,13 +6,13 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Select;
 
 /*
- * 	   [topic_name]
-      ,[capture_time]
-      ,[rank]
-      ,[hotness]
-      ,[short_descp]
-      ,[original_time]
-      ,[first_user]
+ * 	   [topic_name]: pk, nvarchar(50), not null
+      ,[capture_time]: pk, datetime, not null
+      ,[rank]: int, null
+      ,[hotness]: int, null
+      ,[short_descp]: nvarchar(200), null)
+      ,[original_time]: datetime, null
+      ,[first_user]: nvarchar(50), null
   FROM [SinaWeiboTopicData].[dbo].[TrendingTopics]
  */
 public interface TrendingTopicsMapper {
