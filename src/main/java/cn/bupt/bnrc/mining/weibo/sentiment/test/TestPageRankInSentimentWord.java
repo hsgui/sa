@@ -1,5 +1,12 @@
 package cn.bupt.bnrc.mining.weibo.sentiment.test;
 
+import cn.bupt.bnrc.mining.weibo.sentiment.SentimentWordExpander;
+import cn.bupt.bnrc.mining.weibo.util.Utils;
+import cn.bupt.bnrc.mining.weibo.weka.Constants;
+import com.google.common.io.Files;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -8,15 +15,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
-
-import cn.bupt.bnrc.mining.weibo.sentiment.SentimentWordExpander;
-import cn.bupt.bnrc.mining.weibo.util.Utils;
-import cn.bupt.bnrc.mining.weibo.weka.Constants;
 
 public class TestPageRankInSentimentWord extends SentimentWordExpander{
 

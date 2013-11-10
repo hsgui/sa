@@ -1,14 +1,9 @@
 package cn.bupt.bnrc.mining.weibo.search;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import cn.bupt.bnrc.mining.weibo.classify.Emoticons;
+import cn.bupt.bnrc.mining.weibo.repository.localsqlserver.StatusesContentDao;
+import cn.bupt.bnrc.mining.weibo.util.Constants;
+import cn.bupt.bnrc.mining.weibo.util.Utils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -25,10 +20,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.bupt.bnrc.mining.weibo.classify.Emoticons;
-import cn.bupt.bnrc.mining.weibo.repository.localsqlserver.StatusesContentDao;
-import cn.bupt.bnrc.mining.weibo.util.Constants;
-import cn.bupt.bnrc.mining.weibo.util.Utils;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class EmoticonContentIndexer {

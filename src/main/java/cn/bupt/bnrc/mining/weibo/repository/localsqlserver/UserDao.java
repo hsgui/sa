@@ -1,8 +1,8 @@
 package cn.bupt.bnrc.mining.weibo.repository.localsqlserver;
 
-import java.util.Map;
-
 import org.springframework.stereotype.Repository;
+
+import java.util.Map;
 
 @Repository
 public interface UserDao {

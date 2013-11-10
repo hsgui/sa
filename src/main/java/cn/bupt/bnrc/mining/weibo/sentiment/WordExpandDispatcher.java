@@ -1,13 +1,12 @@
 package cn.bupt.bnrc.mining.weibo.sentiment;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import cn.bupt.bnrc.mining.weibo.repository.localsqlserver.StatusesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.bupt.bnrc.mining.weibo.repository.localsqlserver.StatusesDao;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class WordExpandDispatcher {
